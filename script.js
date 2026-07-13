@@ -2,13 +2,30 @@ const API_URL = '/api/search';
 let currentResults = [];
 
 // ===== RECHERCHE =====
-async function performSearch(query) {
-    const searchInput = document.getElementById('searchInput');
+async function performSearch() {
     const resultsContainer = document.getElementById('results');
-    const queryText = query || searchInput.value.trim();
+    
+    // Récupérer tous les champs
+    const fields = {
+        nom: document.getElementById('nom').value.trim(),
+        prenom: document.getElementById('prenom').value.trim(),
+        ville: document.getElementById('ville').value.trim(),
+        code_postal: document.getElementById('code_postal').value.trim(),
+        adresse: document.getElementById('adresse').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telephone: document.getElementById('telephone').value.trim(),
+        date_naissance: document.getElementById('date_naissance').value.trim(),
+        nom_naissance: document.getElementById('nom_naissance').value.trim(),
+        genre: document.getElementById('genre').value.trim(),
+        nir: document.getElementById('nir').value.trim(),
+        iban: document.getElementById('iban').value.trim(),
+        siret: document.getElementById('siret').value.trim()
+    };
 
-    if (!queryText) {
-        resultsContainer.innerHTML = '<p class="error">Veuillez entrer un terme de recherche.</p>';
+    // Vérifier qu'au moins un champ est rempli
+    const hasValue = Object.values(fields).some(v => v !== '');
+    if (!hasValue) {
+        resultsContainer.innerHTML = '<p class="error">Veuillez remplir au moins un champ.</p>';
         return;
     }
 
@@ -18,7 +35,7 @@ async function performSearch(query) {
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: queryText })
+            body: JSON.stringify({ fields })
         });
 
         const data = await response.json();
@@ -50,7 +67,7 @@ function displayResults(results) {
         <div class="results-header">
             <span class="results-count">${results.length} RÉSULTATS</span>
             <div class="results-actions">
-                <button onclick="copyResults()">COPIER</button>
+                <button onclick="copyAllResults()">COPIER TOUT</button>
             </div>
         </div>
     `;
@@ -60,43 +77,30 @@ function displayResults(results) {
         const confidence = person._confidence || '?';
         const sources = person._sources || [];
 
-        const mainFields = [
-            { label: 'EMAIL', key: 'email' },
-            { label: 'TÉLÉPHONE', key: 'telephone' },
-            { label: 'VILLE', key: 'ville' },
-            { label: 'ADRESSE', key: 'adresse' },
-            { label: 'CODE POSTAL', key: 'code_postal' },
-            { label: 'PAYS', key: 'pays' },
-            { label: 'NIR', key: 'nir' },
-            { label: 'IBAN', key: 'iban' },
-            { label: 'BIC', key: 'bic' },
-            { label: 'SIRET', key: 'siret' },
-            { label: 'SIREN', key: 'siren' },
-        ];
+        // Tous les champs sauf ceux de debug
+        const ignore = ['_confidence', '_sources', '_source_db', '_es_ids', '_score'];
+        const allFields = Object.keys(person).filter(k => !ignore.includes(k) && person[k] && person[k] !== 'undefined' && person[k] !== null && person[k] !== '');
 
         html += `
             <div class="result-item">
                 <div class="result-header">
                     <h3>${name}</h3>
-                    <span class="confidence-badge">CONFIANCE ${confidence}%</span>
+                    <div class="actions">
+                        <button onclick="copySingleResult(${index})">📋 COPIER</button>
+                        <span class="confidence-badge">CONFIANCE ${confidence}%</span>
+                    </div>
                 </div>
                 
                 <div class="result-grid">
-                    ${mainFields.filter(f => person[f.key]).map(f => `
+                    ${allFields.map(k => `
                         <div class="field">
-                            <span class="label">${f.label}</span>
-                            <span class="value">${person[f.key]}</span>
+                            <span class="label">${k.toUpperCase().replace(/_/g, ' ')}</span>
+                            <span class="value">${person[k]}</span>
                         </div>
                     `).join('')}
                 </div>
                 
                 ${sources.length ? `<div class="sources-line">SOURCES: ${sources.join(' | ')}</div>` : ''}
-                
-                <button class="details-btn" onclick="toggleDetails(${index})">[+] PLUS DE DÉTAILS</button>
-                
-                <div class="details-content" id="details-${index}">
-                    ${buildDetails(person)}
-                </div>
             </div>
         `;
     });
@@ -104,86 +108,48 @@ function displayResults(results) {
     resultsContainer.innerHTML = html;
 }
 
-// ===== CONSTRUCTION DES DÉTAILS =====
-function buildDetails(person) {
-    const sections = [
-        { title: 'IDENTITÉ', fields: ['nom_famille', 'prenom', 'nom_naissance', 'nom_affichage', 'nom_utilisateur', 'genre', 'civilite', 'date_naissance', 'annee_naissance', 'ville_naissance'] },
-        { title: 'CONTACT', fields: ['email', 'telephone', 'mobile', 'adresse_ip', 'discord_id', 'steam_id', 'fivem_license'] },
-        { title: 'LOCALISATION', fields: ['adresse', 'complement_adresse', 'code_postal', 'ville', 'pays', 'region', 'departement'] },
-        { title: 'IDENTIFIANTS', fields: ['nir', 'iban', 'bic', 'siret', 'siren'] },
-        { title: 'VÉHICULE', fields: ['vin_plaque', 'immatriculation', 'marque', 'modele'] },
-        { title: 'PROFESSIONNEL', fields: ['societe', 'profession', 'fonction'] }
-    ];
+// ===== COPIER UN SEUL RÉSULTAT =====
+function copySingleResult(index) {
+    const person = currentResults[index];
+    if (!person) {
+        showToast('Erreur : résultat introuvable.');
+        return;
+    }
 
-    let html = '';
+    const ignore = ['_confidence', '_sources', '_source_db', '_es_ids', '_score'];
+    const allFields = Object.keys(person).filter(k => !ignore.includes(k) && person[k] && person[k] !== 'undefined' && person[k] !== null && person[k] !== '');
+
+    let text = '═'.repeat(50) + '\n';
+    text += '  MARAUDER - PROFIL\n';
+    text += '═'.repeat(50) + '\n\n';
     
-    sections.forEach(section => {
-        const hasFields = section.fields.some(f => person[f]);
-        if (!hasFields) return;
-        
-        html += `
-            <button class="section-toggle" onclick="toggleSection(this)">
-                ${section.title} <span class="arrow">▶</span>
-            </button>
-            <div class="section-content">
-                ${section.fields.filter(f => person[f]).map(f => `
-                    <div class="field">
-                        <span class="label">${f.toUpperCase()}</span>
-                        <span class="value">${person[f]}</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
+    allFields.forEach(k => {
+        const label = k.toUpperCase().replace(/_/g, ' ');
+        text += `${label} : ${person[k]}\n`;
     });
 
-    // Famille
-    const family = person.famille || person.membres_famille || [];
-    if (family.length) {
-        html += `
-            <button class="section-toggle" onclick="toggleSection(this)">
-                FAMILLE (${family.length}) <span class="arrow">▶</span>
-            </button>
-            <div class="section-content">
-                ${family.map(m => `
-                    <div class="family-group">
-                        <div class="pivot">PIVOT: ${m.pivot || 'TÉLÉPHONE / ADRESSE'}</div>
-                        ${['nom', 'prenom', 'telephone', 'adresse', 'ville'].filter(k => m[k]).map(k => `
-                            <div class="field">
-                                <span class="label">${k.toUpperCase()}</span>
-                                <span class="value">${m[k]}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                `).join('')}
-            </div>
-        `;
+    if (person._sources && person._sources.length) {
+        text += `\nSOURCES : ${person._sources.join(', ')}\n`;
     }
+    text += `\nCONFIANCE : ${person._confidence || '?'}%\n`;
+    text += '\n═'.repeat(50);
 
-    return html;
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('Profil copié !');
+    }).catch(() => {
+        // Fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('Profil copié !');
+    });
 }
 
-// ===== TOGGLE DÉTAILS =====
-function toggleDetails(index) {
-    const content = document.getElementById(`details-${index}`);
-    if (!content) return;
-    content.classList.toggle('open');
-    const btn = content.previousElementSibling;
-    if (btn && btn.classList.contains('details-btn')) {
-        btn.textContent = content.classList.contains('open') ? '[-] MOINS DE DÉTAILS' : '[+] PLUS DE DÉTAILS';
-    }
-}
-
-// ===== TOGGLE SECTION =====
-function toggleSection(btn) {
-    const content = btn.nextElementSibling;
-    if (!content || !content.classList.contains('section-content')) return;
-    content.classList.toggle('open');
-    const arrow = btn.querySelector('.arrow');
-    if (arrow) arrow.classList.toggle('open');
-}
-
-// ===== COPIER RÉSULTATS =====
-function copyResults() {
+// ===== COPIER TOUS LES RÉSULTATS =====
+function copyAllResults() {
     if (!currentResults || currentResults.length === 0) {
         showToast('Aucun résultat à copier.');
         return;
@@ -195,28 +161,27 @@ function copyResults() {
 
     currentResults.forEach((person, i) => {
         const name = `${person.prenom || ''} ${person.nom_famille || ''}`.trim() || 'PROFIL INCONNU';
-        text += `PROFIL ${i+1} : ${name}\n`;
-        text += `CONFIANCE : ${person._confidence || '?'}%\n`;
+        text += `┌─ PROFIL ${i+1} : ${name}\n`;
 
-        const ignore = ['_confidence', '_sources', '_source_db', 'famille', 'membres_famille'];
-        const fields = Object.keys(person).filter(k => !ignore.includes(k) && person[k] && person[k] !== 'undefined');
-        
-        fields.forEach(k => {
+        const ignore = ['_confidence', '_sources', '_source_db', '_es_ids', '_score'];
+        const allFields = Object.keys(person).filter(k => !ignore.includes(k) && person[k] && person[k] !== 'undefined' && person[k] !== null && person[k] !== '');
+
+        allFields.forEach(k => {
             const label = k.toUpperCase().replace(/_/g, ' ');
-            text += `${label} : ${person[k]}\n`;
+            text += `├─ ${label} : ${person[k]}\n`;
         });
 
         if (person._sources && person._sources.length) {
-            text += `SOURCES : ${person._sources.join(', ')}\n`;
+            text += `└─ SOURCES : ${person._sources.join(', ')}\n`;
         }
-        text += '\n';
+        text += `   CONFIANCE : ${person._confidence || '?'}%\n\n`;
     });
 
     text += '═'.repeat(50) + '\n';
     text += `${currentResults.length} RÉSULTATS\n`;
 
     navigator.clipboard.writeText(text).then(() => {
-        showToast(`${currentResults.length} résultats copiés`);
+        showToast(`${currentResults.length} résultats copiés !`);
     }).catch(() => {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -224,16 +189,19 @@ function copyResults() {
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
-        showToast(`${currentResults.length} résultats copiés`);
+        showToast(`${currentResults.length} résultats copiés !`);
     });
 }
 
 // ===== EFFACER =====
 function clearAll() {
-    document.getElementById('searchInput').value = '';
+    const fields = ['nom', 'prenom', 'ville', 'code_postal', 'adresse', 'email', 'telephone', 'date_naissance', 'nom_naissance', 'genre', 'nir', 'iban', 'siret'];
+    fields.forEach(id => {
+        document.getElementById(id).value = '';
+    });
     document.getElementById('results').innerHTML = '';
     currentResults = [];
-    showToast('Résultats effacés');
+    showToast('Champs effacés');
 }
 
 // ===== TOAST =====
@@ -253,13 +221,13 @@ function showToast(message) {
 
 // ===== ÉVÉNEMENTS =====
 document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
-    const clearButton = document.getElementById('clearButton');
+    document.getElementById('searchButton').addEventListener('click', performSearch);
+    document.getElementById('clearButton').addEventListener('click', clearAll);
 
-    searchButton.addEventListener('click', () => performSearch());
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') performSearch();
+    // Enter pour lancer la recherche
+    document.querySelectorAll('.form-group input').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
     });
-    clearButton.addEventListener('click', clearAll);
 });

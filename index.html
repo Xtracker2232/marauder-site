@@ -9,13 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Effet de fond très léger -->
     <div class="bg-overlay"></div>
     
     <header>
         <div class="header-content">
             <div class="logo-container">
-                <!-- RADAR ANIMÉ -->
                 <div class="radar">
                     <div class="radar-ring"></div>
                     <div class="radar-ring"></div>
@@ -35,14 +33,90 @@
     <main>
         <div class="search-container">
             <div class="brand">
+                <img src="https://cdn.discordapp.com/attachments/1477415267452719208/1526218620164636742/image.png?ex=6a56395a&is=6a54e7da&hm=5758e229ea864bcac4d7fcc7d6512c200ffcf7f8a16f90517d9b289c8a683816&" alt="Marauder" class="logo-center">
                 <h1>MARAUDER</h1>
                 <p class="subtitle">// RECHERCHE CSINT //</p>
             </div>
             
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Nom, email, téléphone...">
-                <button id="searchButton">RECHERCHER</button>
-                <button id="clearButton" class="clear-btn">EFFACER</button>
+            <!-- FORMULAIRE DE RECHERCHE -->
+            <div class="search-form">
+                <!-- LIGNE 1 : NOM + PRÉNOM -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>NOM</label>
+                        <input type="text" id="nom" placeholder="Dupont">
+                    </div>
+                    <div class="form-group">
+                        <label>PRÉNOM</label>
+                        <input type="text" id="prenom" placeholder="Jean">
+                    </div>
+                </div>
+
+                <!-- LIGNE 2 : LOCALISATION -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>VILLE</label>
+                        <input type="text" id="ville" placeholder="Paris">
+                    </div>
+                    <div class="form-group">
+                        <label>CODE POSTAL</label>
+                        <input type="text" id="code_postal" placeholder="75001">
+                    </div>
+                    <div class="form-group">
+                        <label>ADRESSE</label>
+                        <input type="text" id="adresse" placeholder="10 rue de la Paix">
+                    </div>
+                </div>
+
+                <!-- LIGNE 3 : CONTACT -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>EMAIL</label>
+                        <input type="text" id="email" placeholder="jean@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>TÉLÉPHONE</label>
+                        <input type="text" id="telephone" placeholder="0612345678">
+                    </div>
+                </div>
+
+                <!-- LIGNE 4 : IDENTITÉ -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>DATE NAISSANCE</label>
+                        <input type="text" id="date_naissance" placeholder="1990-06-15">
+                    </div>
+                    <div class="form-group">
+                        <label>NOM NAISSANCE</label>
+                        <input type="text" id="nom_naissance" placeholder="Martin">
+                    </div>
+                    <div class="form-group">
+                        <label>GENRE</label>
+                        <input type="text" id="genre" placeholder="M/F">
+                    </div>
+                </div>
+
+                <!-- LIGNE 5 : IDENTIFIANTS UNIQUES -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>NIR (SÉCU)</label>
+                        <input type="text" id="nir" placeholder="1234567890123">
+                    </div>
+                    <div class="form-group">
+                        <label>IBAN</label>
+                        <input type="text" id="iban" placeholder="FR76...">
+                    </div>
+                    <div class="form-group">
+                        <label>SIRET</label>
+                        <input type="text" id="siret" placeholder="12345678901234">
+                    </div>
+                </div>
+
+                <!-- BOUTONS -->
+                <div class="form-actions">
+                    <button id="searchButton" class="search-btn">▶ RECHERCHER</button>
+                    <button id="clearButton" class="clear-btn">✕ EFFACER</button>
+                </div>
             </div>
             
             <div id="results"></div>
