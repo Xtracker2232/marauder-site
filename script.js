@@ -5,7 +5,6 @@ let currentResults = [];
 async function performSearch() {
     const resultsContainer = document.getElementById('results');
     
-    // Récupérer tous les champs
     const fields = {
         nom: document.getElementById('nom').value.trim(),
         prenom: document.getElementById('prenom').value.trim(),
@@ -22,7 +21,6 @@ async function performSearch() {
         siret: document.getElementById('siret').value.trim()
     };
 
-    // Vérifier qu'au moins un champ est rempli
     const hasValue = Object.values(fields).some(v => v !== '');
     if (!hasValue) {
         resultsContainer.innerHTML = '<p class="error">Veuillez remplir au moins un champ.</p>';
@@ -54,7 +52,7 @@ async function performSearch() {
     }
 }
 
-// ===== AFFICHAGE DES RÉSULTATS =====
+// ===== AFFICHAGE =====
 function displayResults(results) {
     const resultsContainer = document.getElementById('results');
 
@@ -77,7 +75,6 @@ function displayResults(results) {
         const confidence = person._confidence || '?';
         const sources = person._sources || [];
 
-        // Tous les champs sauf ceux de debug
         const ignore = ['_confidence', '_sources', '_source_db', '_es_ids', '_score'];
         const allFields = Object.keys(person).filter(k => !ignore.includes(k) && person[k] && person[k] !== 'undefined' && person[k] !== null && person[k] !== '');
 
@@ -137,7 +134,6 @@ function copySingleResult(index) {
     navigator.clipboard.writeText(text).then(() => {
         showToast('Profil copié !');
     }).catch(() => {
-        // Fallback
         const textarea = document.createElement('textarea');
         textarea.value = text;
         document.body.appendChild(textarea);
@@ -224,7 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('searchButton').addEventListener('click', performSearch);
     document.getElementById('clearButton').addEventListener('click', clearAll);
 
-    // Enter pour lancer la recherche
     document.querySelectorAll('.form-group input').forEach(input => {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch();
