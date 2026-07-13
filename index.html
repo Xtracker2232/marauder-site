@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marauder - Recherche CSINT</title>
+    <title>Marauder</title>
+    <link rel="icon" href="https://cdn.discordapp.com/attachments/1477415267452719208/1526218620164636742/image.png?ex=6a56395a&is=6a54e7da&hm=5758e229ea864bcac4d7fcc7d6512c200ffcf7f8a16f90517d9b289c8a683816&">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="glitch-overlay"></div>
+    <!-- Effet de fond très léger -->
+    <div class="bg-overlay"></div>
     
     <header>
         <div class="header-content">
             <div class="logo-container">
-                <img src="https://cdn.discordapp.com/attachments/1477415267452719208/1526218620164636742/image.png?ex=6a56395a&is=6a54e7da&hm=5758e229ea864bcac4d7fcc7d6512c200ffcf7f8a16f90517d9b289c8a683816&" alt="Marauder" class="logo-small">
+                <!-- RADAR ANIMÉ -->
+                <div class="radar">
+                    <div class="radar-ring"></div>
+                    <div class="radar-ring"></div>
+                    <div class="radar-ring"></div>
+                    <div class="radar-sweep"></div>
+                    <div class="radar-dot"></div>
+                </div>
                 <span class="logo-text">MARAUDER</span>
             </div>
             <div class="header-status">
                 <span class="status-dot"></span>
-                <span class="status-text">SYSTEME OPERATIONNEL</span>
+                <span class="status-text">ONLINE</span>
             </div>
         </div>
     </header>
@@ -26,16 +35,14 @@
     <main>
         <div class="search-container">
             <div class="brand">
-                <img src="https://cdn.discordapp.com/attachments/1477415267452719208/1526218620164636742/image.png?ex=6a56395a&is=6a54e7da&hm=5758e229ea864bcac4d7fcc7d6512c200ffcf7f8a16f90517d9b289c8a683816&" alt="Marauder" class="logo-large">
                 <h1>MARAUDER</h1>
-                <p class="subtitle">// OSINT &amp; CSINT // ACCES DIRECT //</p>
-                <div class="terminal-line">$ _</div>
+                <p class="subtitle">// RECHERCHE CSINT //</p>
             </div>
             
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder=">_ Rechercher un nom, email, téléphone...">
-                <button id="searchButton">▶ EXECUTER</button>
-                <button id="clearButton" class="clear-btn">✕ EFFACER</button>
+                <input type="text" id="searchInput" placeholder="Nom, email, téléphone...">
+                <button id="searchButton">RECHERCHER</button>
+                <button id="clearButton" class="clear-btn">EFFACER</button>
             </div>
             
             <div id="results"></div>
@@ -43,7 +50,7 @@
     </main>
 
     <footer>
-        <p>© 2026 MARAUDER // PROPUISÉ PAR BRIXHUB // v3.1.0</p>
+        <p>MARAUDER • PROPUISÉ PAR BRIXHUB</p>
     </footer>
 
     <script src="script.js"></script>

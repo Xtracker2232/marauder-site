@@ -8,11 +8,11 @@ async function performSearch(query) {
     const queryText = query || searchInput.value.trim();
 
     if (!queryText) {
-        resultsContainer.innerHTML = '<p class="error">[ERREUR] Veuillez entrer un terme de recherche.</p>';
+        resultsContainer.innerHTML = '<p class="error">Veuillez entrer un terme de recherche.</p>';
         return;
     }
 
-    resultsContainer.innerHTML = '<div class="loading">[RECHERCHE EN COURS]</div>';
+    resultsContainer.innerHTML = '<div class="loading">RECHERCHE EN COURS</div>';
 
     try {
         const response = await fetch(API_URL, {
@@ -24,33 +24,33 @@ async function performSearch(query) {
         const data = await response.json();
 
         if (!response.ok || data.error) {
-            resultsContainer.innerHTML = `<p class="error">[ERREUR] ${data.error || 'Erreur inconnue'}</p>`;
+            resultsContainer.innerHTML = `<p class="error">${data.error || 'Erreur inconnue'}</p>`;
             return;
         }
 
         currentResults = data.data?.results || data.results || [];
-        displayResults(currentResults, queryText);
+        displayResults(currentResults);
 
     } catch (error) {
         console.error('Erreur réseau :', error);
-        resultsContainer.innerHTML = '<p class="error">[ERREUR] Connexion au serveur échouée.</p>';
+        resultsContainer.innerHTML = '<p class="error">Erreur de connexion au serveur.</p>';
     }
 }
 
 // ===== AFFICHAGE DES RÉSULTATS =====
-function displayResults(results, query) {
+function displayResults(results) {
     const resultsContainer = document.getElementById('results');
 
     if (!results || results.length === 0) {
-        resultsContainer.innerHTML = '<p class="no-results">[AUCUN RÉSULTAT]</p>';
+        resultsContainer.innerHTML = '<p class="no-results">AUCUN RÉSULTAT</p>';
         return;
     }
 
     let html = `
-        <div class="results-header-bar">
-            <span class="results-count">[${results.length} RÉSULTATS]</span>
+        <div class="results-header">
+            <span class="results-count">${results.length} RÉSULTATS</span>
             <div class="results-actions">
-                <button onclick="copyResults()">📋 COPIER</button>
+                <button onclick="copyResults()">COPIER</button>
             </div>
         </div>
     `;
@@ -60,7 +60,6 @@ function displayResults(results, query) {
         const confidence = person._confidence || '?';
         const sources = person._sources || [];
 
-        // Champs principaux
         const mainFields = [
             { label: 'EMAIL', key: 'email' },
             { label: 'TÉLÉPHONE', key: 'telephone' },
@@ -76,9 +75,9 @@ function displayResults(results, query) {
         ];
 
         html += `
-            <div class="result-item" data-index="${index}">
+            <div class="result-item">
                 <div class="result-header">
-                    <h3>▶ ${name}</h3>
+                    <h3>${name}</h3>
                     <span class="confidence-badge">CONFIANCE ${confidence}%</span>
                 </div>
                 
@@ -93,7 +92,7 @@ function displayResults(results, query) {
                 
                 ${sources.length ? `<div class="sources-line">SOURCES: ${sources.join(' | ')}</div>` : ''}
                 
-                <button class="details-btn" onclick="toggleDetails(${index})">[+] PLUS DE DÉTAIL</button>
+                <button class="details-btn" onclick="toggleDetails(${index})">[+] PLUS DE DÉTAILS</button>
                 
                 <div class="details-content" id="details-${index}">
                     ${buildDetails(person)}
@@ -111,7 +110,7 @@ function buildDetails(person) {
         { title: 'IDENTITÉ', fields: ['nom_famille', 'prenom', 'nom_naissance', 'nom_affichage', 'nom_utilisateur', 'genre', 'civilite', 'date_naissance', 'annee_naissance', 'ville_naissance'] },
         { title: 'CONTACT', fields: ['email', 'telephone', 'mobile', 'adresse_ip', 'discord_id', 'steam_id', 'fivem_license'] },
         { title: 'LOCALISATION', fields: ['adresse', 'complement_adresse', 'code_postal', 'ville', 'pays', 'region', 'departement'] },
-        { title: 'IDENTIFIANTS UNIQUES', fields: ['nir', 'iban', 'bic', 'siret', 'siren'] },
+        { title: 'IDENTIFIANTS', fields: ['nir', 'iban', 'bic', 'siret', 'siren'] },
         { title: 'VÉHICULE', fields: ['vin_plaque', 'immatriculation', 'marque', 'modele'] },
         { title: 'PROFESSIONNEL', fields: ['societe', 'profession', 'fonction'] }
     ];
@@ -170,7 +169,7 @@ function toggleDetails(index) {
     content.classList.toggle('open');
     const btn = content.previousElementSibling;
     if (btn && btn.classList.contains('details-btn')) {
-        btn.textContent = content.classList.contains('open') ? '[-] MOINS DE DÉTAIL' : '[+] PLUS DE DÉTAIL';
+        btn.textContent = content.classList.contains('open') ? '[-] MOINS DE DÉTAILS' : '[+] PLUS DE DÉTAILS';
     }
 }
 
@@ -186,54 +185,46 @@ function toggleSection(btn) {
 // ===== COPIER RÉSULTATS =====
 function copyResults() {
     if (!currentResults || currentResults.length === 0) {
-        showToast('[ERREUR] Aucun résultat à copier.');
+        showToast('Aucun résultat à copier.');
         return;
     }
 
-    let text = '═' .repeat(60) + '\n';
-    text += '  MARAUDER - RÉSULTATS DE RECHERCHE\n';
-    text += '═' .repeat(60) + '\n\n';
+    let text = '═'.repeat(50) + '\n';
+    text += '  MARAUDER - RÉSULTATS\n';
+    text += '═'.repeat(50) + '\n\n';
 
     currentResults.forEach((person, i) => {
         const name = `${person.prenom || ''} ${person.nom_famille || ''}`.trim() || 'PROFIL INCONNU';
-        text += `┌─ PROFIL ${i+1} : ${name}\n`;
-        text += `├─ CONFIANCE : ${person._confidence || '?'}%\n`;
+        text += `PROFIL ${i+1} : ${name}\n`;
+        text += `CONFIANCE : ${person._confidence || '?'}%\n`;
 
-        // Tous les champs disponibles
         const ignore = ['_confidence', '_sources', '_source_db', 'famille', 'membres_famille'];
         const fields = Object.keys(person).filter(k => !ignore.includes(k) && person[k] && person[k] !== 'undefined');
         
-        if (fields.length) {
-            fields.forEach(k => {
-                const label = k.toUpperCase().replace(/_/g, ' ');
-                text += `├─ ${label} : ${person[k]}\n`;
-            });
-        }
+        fields.forEach(k => {
+            const label = k.toUpperCase().replace(/_/g, ' ');
+            text += `${label} : ${person[k]}\n`;
+        });
 
-        // Sources
         if (person._sources && person._sources.length) {
-            text += `└─ SOURCES : ${person._sources.join(', ')}\n`;
+            text += `SOURCES : ${person._sources.join(', ')}\n`;
         }
-        
         text += '\n';
     });
 
-    text += '═' .repeat(60) + '\n';
-    text += `  ${currentResults.length} RÉSULTATS • MARAUDER v3.1.0\n`;
-    text += '═' .repeat(60);
+    text += '═'.repeat(50) + '\n';
+    text += `${currentResults.length} RÉSULTATS\n`;
 
-    // Copier dans le presse-papier
     navigator.clipboard.writeText(text).then(() => {
-        showToast('[✓] ${currentResults.length} résultats copiés !');
+        showToast(`${currentResults.length} résultats copiés`);
     }).catch(() => {
-        // Fallback
         const textarea = document.createElement('textarea');
         textarea.value = text;
         document.body.appendChild(textarea);
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
-        showToast('[✓] ${currentResults.length} résultats copiés !');
+        showToast(`${currentResults.length} résultats copiés`);
     });
 }
 
@@ -242,10 +233,10 @@ function clearAll() {
     document.getElementById('searchInput').value = '';
     document.getElementById('results').innerHTML = '';
     currentResults = [];
-    showToast('[✓] Résultats effacés.');
+    showToast('Résultats effacés');
 }
 
-// ===== TOAST NOTIFICATION =====
+// ===== TOAST =====
 function showToast(message) {
     let toast = document.getElementById('toast');
     if (!toast) {
@@ -257,7 +248,7 @@ function showToast(message) {
     toast.textContent = message;
     toast.classList.add('show');
     clearTimeout(toast._timeout);
-    toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
+    toast._timeout = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
 // ===== ÉVÉNEMENTS =====
