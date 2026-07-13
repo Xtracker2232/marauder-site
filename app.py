@@ -24,16 +24,18 @@ def index():
 def static_files(path):
     return send_from_directory('.', path)
 
-# Endpoint de recherche
+# ===== ENDPOINT DE RECHERCHE CORRIGÉ =====
 @app.route('/api/search', methods=['POST'])
 def proxy_search():
     if not BRIX_API_KEY:
         return jsonify({"error": "Clé API BrixHub non configurée."}), 500
 
     data = request.json
-    query = data.get('query', '').strip()
+    fields = data.get('fields', {})
     
-    if not query:
+    # Vérifier qu'au moins un champ est rempli
+    has_value = any(v for v in fields.values() if v and str(v).strip())
+    if not has_value:
         return jsonify({"error": "Requête de recherche manquante."}), 400
 
     headers = {
@@ -41,31 +43,55 @@ def proxy_search():
         "Content-Type": "application/json"
     }
     
-    # Construire le payload pour BrixHub
+    # Construire le payload avec TOUS les champs
     payload = {
         "flexible": True,
-        "per_page": 10
+        "per_page": 20
     }
     
-    # Détection automatique du type de recherche
-    if '@' in query:
-        payload["email"] = query
-    elif query.startswith('06') or query.startswith('07') or query.startswith('+33'):
-        payload["telephone"] = query
-    else:
-        # Recherche par nom/prénom/ville
-        payload["nom_famille"] = query
-        payload["ville"] = query
+    # Mappage des champs du formulaire vers l'API BrixHub
+    field_mapping = {
+        'nom': 'nom_famille',
+        'prenom': 'prenom',
+        'nom_naissance': 'nom_naissance',
+        'email': 'email',
+        'telephone': 'telephone',
+        'ville': 'ville',
+        'code_postal': 'code_postal',
+        'adresse': 'adresse',
+        'date_naissance': 'date_naissance',
+        'genre': 'genre',
+        'nir': 'nir',
+        'iban': 'iban',
+        'siret': 'siret'
+    }
+    
+    # Ajouter les champs non vides au payload
+    for form_field, api_field in field_mapping.items():
+        value = fields.get(form_field, '').strip()
+        if value:
+            payload[api_field] = value
+    
+    # Ajouter les champs avancés si présents
+    advanced_fields = ['nom_affichage', 'nom_utilisateur', 'mobile', 'adresse_ip', 
+                       'complement_adresse', 'pays', 'region', 'departement', 
+                       'annee_naissance', 'ville_naissance', 'bic', 'siren',
+                       'vin_plaque', 'immatriculation', 'marque', 'modele',
+                       'societe', 'profession', 'fonction']
+    
+    for field in advanced_fields:
+        value = fields.get(field, '').strip()
+        if value:
+            payload[field] = value
     
     try:
-        response = requests.post(f"{BRIX_BASE_URL}/search", json=payload, headers=headers, timeout=10)
+        response = requests.post(f"{BRIX_BASE_URL}/search", json=payload, headers=headers, timeout=15)
         response.raise_for_status()
         return jsonify(response.json())
     except requests.exceptions.RequestException as e:
         print(f"Erreur vers BrixHub : {e}")
-        return jsonify({"error": "Erreur lors de la recherche externe."}), 500
+        return jsonify({"error": f"Erreur API: {str(e)}"}), 500
 
-# Point de santé pour Railway
 @app.route('/health')
 def health():
     return jsonify({"status": "ok"})
