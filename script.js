@@ -27,7 +27,22 @@ async function performSearch() {
         return;
     }
 
-    resultsContainer.innerHTML = '<div class="loading">RECHERCHE EN COURS</div>';
+    // ==== ANIMATION "MARAUDER RÉFLÉCHIT" ====
+    resultsContainer.innerHTML = `
+        <div class="thinking-container">
+            <div class="thinking-text">MARAUDER</div>
+            <div class="thinking-sub">réfléchit...</div>
+            <div class="thinking-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="thinking-radar">
+                <div class="thinking-ring"></div>
+                <div class="thinking-ring"></div>
+                <div class="thinking-ring"></div>
+                <div class="thinking-sweep"></div>
+            </div>
+        </div>
+    `;
 
     try {
         const response = await fetch(API_URL, {
