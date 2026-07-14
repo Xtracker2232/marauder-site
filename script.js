@@ -1,6 +1,35 @@
 const API_URL = '/api/search';
 let currentResults = [];
 
+// ===== AFFICHER L'ANIMATION DE CHARGEMENT =====
+function showLoading() {
+    const overlay = document.createElement('div');
+    overlay.id = 'loading-overlay';
+    overlay.innerHTML = `
+        <div class="loading-content">
+            <div class="loading-text">MARAUDER</div>
+            <div class="loading-sub">réfléchit...</div>
+            <div class="loading-bar-container">
+                <div class="loading-bar"></div>
+            </div>
+            <div class="loading-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.add('show'), 10);
+}
+
+// ===== CACHER L'ANIMATION =====
+function hideLoading() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => overlay.remove(), 600);
+    }
+}
+
 // ===== RECHERCHE =====
 async function performSearch() {
     const resultsContainer = document.getElementById('results');
@@ -27,22 +56,7 @@ async function performSearch() {
         return;
     }
 
-    // ==== ANIMATION "MARAUDER RÉFLÉCHIT" ====
-    resultsContainer.innerHTML = `
-        <div class="thinking-container">
-            <div class="thinking-text">MARAUDER</div>
-            <div class="thinking-sub">réfléchit...</div>
-            <div class="thinking-dots">
-                <span></span><span></span><span></span>
-            </div>
-            <div class="thinking-radar">
-                <div class="thinking-ring"></div>
-                <div class="thinking-ring"></div>
-                <div class="thinking-ring"></div>
-                <div class="thinking-sweep"></div>
-            </div>
-        </div>
-    `;
+    showLoading();
 
     try {
         const response = await fetch(API_URL, {
@@ -53,6 +67,8 @@ async function performSearch() {
 
         const data = await response.json();
 
+        hideLoading();
+
         if (!response.ok || data.error) {
             resultsContainer.innerHTML = `<p class="error">${data.error || 'Erreur inconnue'}</p>`;
             return;
@@ -62,6 +78,7 @@ async function performSearch() {
         displayResults(currentResults);
 
     } catch (error) {
+        hideLoading();
         console.error('Erreur réseau :', error);
         resultsContainer.innerHTML = '<p class="error">Erreur de connexion au serveur.</p>';
     }
