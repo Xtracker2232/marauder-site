@@ -1,7 +1,6 @@
 const API_URL = '/api/search';
 let currentResults = [];
 
-// ===== AFFICHER L'ANIMATION DE CHARGEMENT =====
 function showLoading() {
     const overlay = document.createElement('div');
     overlay.id = 'loading-overlay';
@@ -21,7 +20,6 @@ function showLoading() {
     setTimeout(() => overlay.classList.add('show'), 10);
 }
 
-// ===== CACHER L'ANIMATION =====
 function hideLoading() {
     const overlay = document.getElementById('loading-overlay');
     if (overlay) {
@@ -30,7 +28,6 @@ function hideLoading() {
     }
 }
 
-// ===== RECHERCHE =====
 async function performSearch() {
     const resultsContainer = document.getElementById('results');
     
@@ -84,7 +81,6 @@ async function performSearch() {
     }
 }
 
-// ===== AFFICHAGE =====
 function displayResults(results) {
     const resultsContainer = document.getElementById('results');
 
@@ -137,7 +133,6 @@ function displayResults(results) {
     resultsContainer.innerHTML = html;
 }
 
-// ===== COPIER UN SEUL RÉSULTAT =====
 function copySingleResult(index) {
     const person = currentResults[index];
     if (!person) {
@@ -176,7 +171,6 @@ function copySingleResult(index) {
     });
 }
 
-// ===== COPIER TOUS LES RÉSULTATS =====
 function copyAllResults() {
     if (!currentResults || currentResults.length === 0) {
         showToast('Aucun résultat à copier.');
@@ -221,7 +215,6 @@ function copyAllResults() {
     });
 }
 
-// ===== EFFACER =====
 function clearAll() {
     const fields = ['nom', 'prenom', 'ville', 'code_postal', 'adresse', 'email', 'telephone', 'date_naissance', 'nom_naissance', 'genre', 'nir', 'iban', 'siret'];
     fields.forEach(id => {
@@ -232,7 +225,6 @@ function clearAll() {
     showToast('Champs effacés');
 }
 
-// ===== TOAST =====
 function showToast(message) {
     let toast = document.getElementById('toast');
     if (!toast) {
@@ -247,7 +239,6 @@ function showToast(message) {
     toast._timeout = setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ===== ÉVÉNEMENTS =====
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('searchButton').addEventListener('click', performSearch);
     document.getElementById('clearButton').addEventListener('click', clearAll);

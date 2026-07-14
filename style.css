@@ -162,10 +162,11 @@ main {
 }
 
 .logo-center {
-    max-width: 100px;
-    margin: 0 auto 10px;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 12px;
     display: block;
-    opacity: 0.9;
+    filter: drop-shadow(0 0 30px rgba(74, 122, 191, 0.15));
 }
 
 .brand h1 {
@@ -182,7 +183,6 @@ main {
     margin-top: 4px;
 }
 
-/* ===== FORMULAIRE ===== */
 .search-form {
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -291,7 +291,6 @@ main {
     color: #ff6b6b;
 }
 
-/* ===== OVERLAY DE CHARGEMENT ===== */
 #loading-overlay {
     position: fixed;
     top: 0;
@@ -404,7 +403,6 @@ main {
     40% { transform: scale(1.4); opacity: 1; }
 }
 
-/* ===== RÉSULTATS ===== */
 .results-header {
     display: flex;
     justify-content: space-between;
@@ -541,26 +539,6 @@ main {
     letter-spacing: 0.5px;
 }
 
-.loading {
-    text-align: center;
-    color: rgba(255, 255, 255, 0.3);
-    padding: 30px;
-    font-size: 14px;
-    letter-spacing: 2px;
-}
-
-.loading::after {
-    content: '...';
-    animation: dots 1.5s steps(4) infinite;
-}
-
-@keyframes dots {
-    0% { content: ''; }
-    25% { content: '.'; }
-    50% { content: '..'; }
-    75% { content: '...'; }
-}
-
 .error {
     color: rgba(255, 120, 120, 0.8);
     text-align: center;
@@ -623,7 +601,6 @@ footer .license {
     margin-top: 2px;
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .form-row {
         grid-template-columns: 1fr !important;
@@ -672,9 +649,6 @@ footer .license {
         padding: 5px 12px;
         font-size: 10px;
     }
-    .search-form {
-        padding: 14px;
-    }
     .form-group input {
         font-size: 13px;
         padding: 9px 12px;
@@ -684,6 +658,10 @@ footer .license {
         padding: 10px 20px;
         font-size: 13px;
         border-radius: 8px;
+    }
+    .logo-center {
+        width: 100px;
+        height: 100px;
     }
     .loading-text {
         font-size: 3.2rem;
@@ -705,9 +683,6 @@ footer .license {
     .brand h1 {
         font-size: 20px;
         letter-spacing: 3px;
-    }
-    .logo-center {
-        max-width: 70px;
     }
     .search-form {
         padding: 12px;
@@ -760,6 +735,10 @@ footer .license {
         border-radius: 8px;
         bottom: 15px;
         right: 15px;
+    }
+    .logo-center {
+        width: 80px;
+        height: 80px;
     }
     .loading-text {
         font-size: 2.2rem;

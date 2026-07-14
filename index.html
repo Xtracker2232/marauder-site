@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Marauder</title>
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/1477415267452719208/1526218620164636742/image.png?ex=6a56395a&is=6a54e7da&hm=5758e229ea864bcac4d7fcc7d6512c200ffcf7f8a16f90517d9b289c8a683816&">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔍%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
@@ -33,7 +33,29 @@
     <main>
         <div class="search-container">
             <div class="brand">
-                <img src="https://cdn.discordapp.com/attachments/1477415267452719208/1526218620164636742/image.png?ex=6a56395a&is=6a54e7da&hm=5758e229ea864bcac4d7fcc7d6512c200ffcf7f8a16f90517d9b289c8a683816&" alt="Marauder" class="logo-center">
+                <svg class="logo-center" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="100" r="90" stroke="#4a7abf" stroke-width="2" opacity="0.3"/>
+                    <circle cx="100" cy="100" r="70" stroke="#4a7abf" stroke-width="1.5" opacity="0.2"/>
+                    <circle cx="100" cy="100" r="50" stroke="#4a7abf" stroke-width="1" opacity="0.15"/>
+                    <circle cx="100" cy="100" r="30" stroke="#4a7abf" stroke-width="0.5" opacity="0.1"/>
+                    <line x1="100" y1="100" x2="180" y2="100" stroke="#4a7abf" stroke-width="2" opacity="0.6">
+                        <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="4s" repeatCount="indefinite"/>
+                    </line>
+                    <circle cx="100" cy="100" r="6" fill="#4a7abf" opacity="0.8">
+                        <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="60" cy="60" r="4" fill="#4a7abf" opacity="0.4">
+                        <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="140" cy="70" r="3" fill="#4a7abf" opacity="0.3">
+                        <animate attributeName="opacity" values="0.1;0.5;0.1" dur="2.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="80" cy="150" r="3" fill="#4a7abf" opacity="0.3">
+                        <animate attributeName="opacity" values="0.3;0.7;0.3" dur="3.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <text x="100" y="185" text-anchor="middle" fill="#4a7abf" font-family="'Share Tech Mono', monospace" font-size="18" opacity="0.4">M</text>
+                </svg>
                 <h1>MARAUDER</h1>
                 <p class="subtitle">// RECHERCHE OSINT //</p>
             </div>
