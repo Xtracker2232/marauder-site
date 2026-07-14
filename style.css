@@ -162,9 +162,10 @@ main {
 }
 
 .logo-center {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 12px;
+    max-width: 180px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 15px;
     display: block;
     filter: drop-shadow(0 0 30px rgba(74, 122, 191, 0.15));
 }
@@ -601,7 +602,11 @@ footer .license {
     margin-top: 2px;
 }
 
+/* ===== RESPONSIVE PHOTO ===== */
 @media (max-width: 768px) {
+    .logo-center {
+        max-width: 140px;
+    }
     .form-row {
         grid-template-columns: 1fr !important;
     }
@@ -659,10 +664,6 @@ footer .license {
         font-size: 13px;
         border-radius: 8px;
     }
-    .logo-center {
-        width: 100px;
-        height: 100px;
-    }
     .loading-text {
         font-size: 3.2rem;
         letter-spacing: 10px;
@@ -677,6 +678,9 @@ footer .license {
 }
 
 @media (max-width: 480px) {
+    .logo-center {
+        max-width: 100px;
+    }
     header {
         padding: 8px 15px;
     }
@@ -735,10 +739,6 @@ footer .license {
         border-radius: 8px;
         bottom: 15px;
         right: 15px;
-    }
-    .logo-center {
-        width: 80px;
-        height: 80px;
     }
     .loading-text {
         font-size: 2.2rem;
